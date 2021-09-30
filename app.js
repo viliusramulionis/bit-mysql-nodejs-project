@@ -1,27 +1,12 @@
 const express = require('express');
 const hbs = require('express-handlebars');
 const app = express();
-const mysql = require('mysql');
 const path = require('path');
+const db = require('./db/connection');
 
-//Prisijungimo prie Mysql generavimas
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'clients'
-});
-
-//Prisijungimo paleidimas ir callback'as
-db.connect(err => {
-    if(err) {
-        console.log('Nepavyko prisijungti prie Mysql duomenų bazės');
-
-        return;
-    }
-
-    console.log('Sėkmingai prisijungėme prie Mysql duomenų bazės');
-});
+app.use(express.urlencoded({
+    extended: false
+}));
 
 app.engine('hbs', hbs({
     extname: 'hbs',
@@ -37,6 +22,26 @@ app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
     res.render('add-company');
+});
+
+app.get('/add-company', (req, res) => {
+    res.render('add-company');
+});
+
+app.post('/add-company', (req, res) => {
+    let companyName     = req.body.name;
+    let companyAddress  = req.body.address;
+
+    db.query(`INSERT INTO companies (name, address) 
+              VALUES ( '${companyName}' , '${companyAddress}' )`
+    , (err, res) => {
+        if(err) {
+            console.log(err);
+            return;
+        }
+
+        console.log('Sėkmingai pridėjote įrašą kurio ID yra: ' + res.insertId);
+    });
 });
 
 app.listen('3000');
