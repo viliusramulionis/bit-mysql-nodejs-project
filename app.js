@@ -18,6 +18,8 @@ app.set('views', path.join(__dirname, '/views/'));
 
 app.set('view engine', 'hbs');
 
+app.use('/static', express.static('public'));
+
 //Controlleris vedantis index puslapi
 
 app.get('/', (req, res) => {
@@ -29,7 +31,7 @@ app.get('/add-company', (req, res) => {
 });
 
 app.post('/add-company', (req, res) => {
-    
+
     let companyName     = req.body.name;
     let companyAddress  = req.body.address;
 
