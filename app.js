@@ -29,19 +29,31 @@ app.get('/add-company', (req, res) => {
 });
 
 app.post('/add-company', (req, res) => {
+    
     let companyName     = req.body.name;
     let companyAddress  = req.body.address;
 
-    db.query(`INSERT INTO companies (name, address) 
-              VALUES ( '${companyName}' , '${companyAddress}' )`
-    , (err, res) => {
-        if(err) {
-            console.log(err);
-            return;
+    db.query(`SELECT * FROM companies WHERE name = '${companyName}'`, (err, resp) => {
+
+        if(resp.length == 0) {
+            
+            db.query(`INSERT INTO companies (name, address) 
+                    VALUES ( '${companyName}' , '${companyAddress}' )`
+            , err => {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+
+                res.redirect('/?m=Sėkmingai pridėjote įrašą');
+            });
+
+        } else {
+            res.redirect('/?m=Toks įrašas jau egzistuoja');
         }
 
-        console.log('Sėkmingai pridėjote įrašą kurio ID yra: ' + res.insertId);
     });
+
 });
 
 app.listen('3000');
