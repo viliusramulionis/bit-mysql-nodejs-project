@@ -1,4 +1,2 @@
-# BIT Duomenų bazių pristatymas
+# BIT Mysql Duomenų bazių pristatymas
 
-Šis projektas naudoja mongodb ir nodejs draiverį susipažinimui su NoSql duomenų bazėmis.
- 
