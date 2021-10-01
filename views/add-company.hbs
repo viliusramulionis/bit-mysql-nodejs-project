@@ -1,12 +1,13 @@
 <h1>Naujos kompanijos įkėlimas</h1>
+<div class="pt-3"></div>
 <form method="post" action="/add-company">
-    <p>
-        <label>Kompanijos pavadinimas</label>
-        <input type="text" name="name" value="" />
-    </p>
-    <p>
-        <label>Kompanijos adresas</label>
-        <input type="text" name="address" value="" />
-    </p>
-    <p><button type="submit">Įrašyti</button></p>
+    <div class="mb-3">
+        <label for="name" class="form-label">Kompanijos pavadinimas</label>
+        <input type="text" name="name" id="name" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">Kompanijos adresas</label>
+        <input type="text" name="address" id="address" class="form-control" value="" />
+    </div>
+    <button type="submit" class="btn btn-primary">Įrašyti</button>
  </form>

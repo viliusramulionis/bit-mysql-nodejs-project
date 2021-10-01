@@ -1,21 +1,24 @@
 <h1>Kompanijų sąrašas</h1>
 
 {{#if messages}}
-    <div class="messages">{{messages}}</div>
+    <div class="alert alert-{{status}}">{{messages}}</div>
 {{/if}}
 
-<table>
-    <tr>
+<table class="table table-hover">
+    <thead>
         <th>ID</th>
         <th>Pavadinimas</th>
         <th>Adresas</th>
-    </tr>
-
-    {{#each companies}}
-        <tr>
-            <td>{{id}}</td>
-            <td>{{name}}</td>
-            <td>{{address}}</td>
-        </tr>
-    {{/each}}
+        <th>Veiksmai</th>
+    </thead>
+    <tbody>
+        {{#each companies}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>{{address}}</td>
+                <td><a href="/edit-company/{{id}}" class="btn btn-primary btn-sm">Redaguoti</a></td>
+            </tr>
+        {{/each}}
+    </tbody>
 </table>
