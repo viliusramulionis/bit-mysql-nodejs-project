@@ -1,0 +1,21 @@
+<h1>Kompanijų sąrašas</h1>
+
+{{#if messages}}
+    <div class="messages">{{messages}}</div>
+{{/if}}
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Pavadinimas</th>
+        <th>Adresas</th>
+    </tr>
+
+    {{#each companies}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>{{address}}</td>
+        </tr>
+    {{/each}}
+</table>

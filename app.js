@@ -19,11 +19,14 @@ app.set('views', path.join(__dirname, '/views/'));
 app.set('view engine', 'hbs');
 
 app.use('/static', express.static('public'));
+app.use('/static/css', express.static( path.join( __dirname, 'node_modules/bootstrap/dist/css') ) );
+app.use('/static/js', express.static( path.join( __dirname, 'node_modules/bootstrap/dist/js') ) );
 
 //Controlleris vedantis index puslapi
 
 app.get('/', (req, res) => {
-    res.render('add-company');
+    //res.render('add-company');
+    res.send('Titulinis');
 });
 
 app.get('/add-company', (req, res) => {
@@ -47,11 +50,25 @@ app.post('/add-company', (req, res) => {
                     return;
                 }
 
-                res.redirect('/?m=Sėkmingai pridėjote įrašą');
+                res.redirect('/list-companies/?m=Sėkmingai pridėjote įrašą');
             });
 
         } else {
-            res.redirect('/?m=Toks įrašas jau egzistuoja');
+            res.redirect('/list-companies/?m=Toks įrašas jau egzistuoja');
+        }
+
+    });
+
+});
+
+app.get('/list-companies', (req, res) => {
+
+    let messages = req.query.m;
+
+    db.query(`SELECT * FROM companies`, (err, resp) => {
+        
+        if(!err) {
+            res.render('list-companies', {companies: resp, messages});
         }
 
     });
