@@ -1,0 +1,39 @@
+<h1>Klientų sąrašas</h1>
+
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
+
+{{#if clients}}
+<table class="table table-hover">
+    <thead>
+        <th>ID</th>
+        <th>Vardas</th>
+        <th>Pavardė</th>
+        <th>Telefonas</th>
+        <th>El. paštas</th>
+        <th>Veiksmai</th>
+    </thead>
+    <tbody>
+        {{#each clients}}
+            <tr>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>{{surname}}</td>
+                <td>{{phone}}</td>
+                <td>{{email}}</td>
+                <td>
+                    <a href="/edit-company/{{id}}" class="btn btn-primary btn-sm">Redaguoti</a>
+                    <a href="/delete-company/{{id}}" class="btn btn-danger btn-sm btn-delete-company">Ištrinti</a>
+                </td>
+
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{else}}
+
+    <h4>Šiuo metu duomenų bazėje nėra įvestų klientų.</h4>
+
+{{/if}}

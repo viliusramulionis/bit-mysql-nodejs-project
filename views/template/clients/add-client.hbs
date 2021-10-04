@@ -1,0 +1,39 @@
+<h1>Naujo kliento sukūrimas</h1>
+<div class="pt-3"></div>
+<form method="post" action="/add-client">
+    <div class="mb-3">
+        <label for="name" class="form-label">Vardas</label>
+        <input type="text" name="name" id="name" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="surname" class="form-label">Pavardė</label>
+        <input type="text" name="surname" id="surname" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">Telefono numeris</label>
+        <input type="tel" name="phone" id="phone" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">El. pašto adresas</label>
+        <input type="text" name="email" id="email" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="photo" class="form-label">Nuotrauka</label>
+        <input type="file" name="photo" id="photo" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="comment" class="form-label">Komentarai</label>
+        <textarea name="comment" id="comment" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="company" class="form-label">Kompanija</label>
+        <select name="company" id="company">
+            {{#each companies}}
+            <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Įrašyti</button>
+ </form>
+
+ <div class="pt-5"></div>
