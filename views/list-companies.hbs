@@ -17,7 +17,11 @@
                 <td>{{id}}</td>
                 <td>{{name}}</td>
                 <td>{{address}}</td>
-                <td><a href="/edit-company/{{id}}" class="btn btn-primary btn-sm">Redaguoti</a></td>
+                <td>
+                    <a href="/edit-company/{{id}}" class="btn btn-primary btn-sm">Redaguoti</a>
+                    <a href="/delete-company/{{id}}" class="btn btn-danger btn-sm btn-delete-company">Ištrinti</a>
+                </td>
+
             </tr>
         {{/each}}
     </tbody>

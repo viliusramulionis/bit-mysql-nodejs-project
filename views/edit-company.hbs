@@ -1,0 +1,16 @@
+<h1>Kompanijos redagavimas</h1>
+<div class="pt-3"></div>
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
+<form method="post" action="/edit-company/{{company.id}}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Kompanijos pavadinimas</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{company.name}}" />
+    </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">Kompanijos adresas</label>
+        <input type="text" name="address" id="address" class="form-control" value="{{company.address}}" />
+    </div>
+    <button type="submit" class="btn btn-primary">Įrašyti</button>
+ </form>
