@@ -1,6 +1,6 @@
 <h1>Naujo kliento sukūrimas</h1>
 <div class="pt-3"></div>
-<form method="post" action="/add-client">
+<form method="post" action="/add-client" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="name" class="form-label">Vardas</label>
         <input type="text" name="name" id="name" class="form-control" value="" />
@@ -27,7 +27,8 @@
     </div>
     <div class="mb-3">
         <label for="company" class="form-label">Kompanija</label>
-        <select name="company" id="company">
+        <select name="company" id="company" class="form-control">
+            <option value="0">Bedarbis</option> 
             {{#each companies}}
             <option value="{{id}}">{{name}}</option>
             {{/each}}

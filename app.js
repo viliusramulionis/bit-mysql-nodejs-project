@@ -31,7 +31,7 @@ app.use('/', companiesController);
 
 app.get('/', (req, res) => {
     //res.render('add-company');
-    res.send('Titulinis');
+    res.render('template/index');
 });
 
 
