@@ -8,23 +8,27 @@
 <table class="table table-hover">
     <thead>
         <th>ID</th>
+        <th>Nuotrauka</th>
         <th>Vardas</th>
         <th>Pavardė</th>
         <th>Telefonas</th>
         <th>El. paštas</th>
+        <th>Komentaras</th>
         <th>Veiksmai</th>
     </thead>
     <tbody>
         {{#each clients}}
             <tr>
                 <td>{{id}}</td>
+                <td>{{#if photo}}<img src="/uploads/{{photo}}" width="50" height="50" />{{/if}}</td>
                 <td>{{name}}</td>
                 <td>{{surname}}</td>
                 <td>{{phone}}</td>
                 <td>{{email}}</td>
+                <td>{{{comment}}}</td>
                 <td>
-                    <a href="/edit-company/{{id}}" class="btn btn-primary btn-sm">Redaguoti</a>
-                    <a href="/delete-company/{{id}}" class="btn btn-danger btn-sm btn-delete-company">Ištrinti</a>
+                    <a href="/edit-client/{{id}}" class="btn btn-primary btn-sm">Redaguoti</a>
+                    <a href="/delete-client/{{id}}" class="btn btn-danger btn-sm btn-delete-client">Ištrinti</a>
                 </td>
 
             </tr>

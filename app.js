@@ -20,6 +20,7 @@ app.set('views', path.join(__dirname, '/views/'));
 
 app.set('view engine', 'hbs');
 
+app.use('/uploads', express.static('uploads'));
 app.use('/static', express.static('static'));
 app.use('/static/css', express.static( path.join( __dirname, 'node_modules/bootstrap/dist/css') ) );
 app.use('/static/js', express.static( path.join( __dirname, 'node_modules/bootstrap/dist/js') ) );

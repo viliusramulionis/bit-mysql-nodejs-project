@@ -1,8 +1,8 @@
-const express = require('express');
+const express   = require('express');
 const validator = require('validator');
 const path      = require('path');
-const multer  = require('multer');
-const storage = multer.diskStorage({
+const multer    = require('multer');
+const storage   = multer.diskStorage({
     destination: 'uploads/',
     filename: function(req, file, callback) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -29,7 +29,7 @@ app.get('/list-clients', (req, res) => {
     let status = req.query.s;
 
     db.query(`SELECT * FROM customers`, (err, resp) => {
-        
+        console.log(resp);
         if(!err) {
 
             res.render('template/clients/list-clients', {clients: resp, messages, status});
@@ -64,7 +64,7 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
     let surname     = req.body.surname;
     let phone       = req.body.phone;
     let email       = req.body.email;
-    let photo       = req.file.filename;
+    let photo       = (!req.files) ? '' : req.file.filename; //If funkcijos trumpinys, jeigu req.files neegzistuoja, tuomet grąžiname tuščią stringą. Priešingu atveju, grąžiname failo pavadinimą.
     let comment     = req.body.comment;
     let company_id  = req.body.company;
 

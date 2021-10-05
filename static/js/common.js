@@ -7,3 +7,5 @@ deleteCompany.forEach(node => node.addEventListener("click", function(e) {
     if(confirm('Ar tikrai norite pašalinti šią kompaniją?')) 
         window.location = node.getAttribute('href');
 }));
+
+
