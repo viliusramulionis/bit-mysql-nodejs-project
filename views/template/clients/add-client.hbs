@@ -1,5 +1,8 @@
 <h1>Naujo kliento sukūrimas</h1>
 <div class="pt-3"></div>
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
 <form method="post" action="/add-client" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="name" class="form-label">Vardas</label>

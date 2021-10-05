@@ -1,7 +1,23 @@
 const express = require('express');
 const validator = require('validator');
+const path      = require('path');
 const multer  = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.diskStorage({
+    destination: 'uploads/',
+    filename: function(req, file, callback) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        callback(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+})
+const upload = multer({ 
+    fileFilter: function(req, file, callback) {
+        if(file.mimetype != 'image/jpeg' && file.mimetype != 'image/png')
+            return callback(new Error('Neteisingas nuotraukos formatas'));
+
+        callback(null, true);
+    },
+    storage: storage
+});
 const db = require('../db/connection');
 const app = express.Router();
 
@@ -31,9 +47,9 @@ app.get('/list-clients', (req, res) => {
 app.get('/add-client', (req, res) => {
 
     db.query(`SELECT id, name FROM companies`, (err, resp) => {
-        
+
         if(err) {
-            res.render('template/clients/add-client', {message: 'Nepavyko paimti kompanijų iš duomenų bazės.'});
+            res.render('template/clients/add-client', {messages: 'Nepavyko paimti kompanijų iš duomenų bazės.', status: 'danger'});
         } else {
             res.render('template/clients/add-client', {companies: resp});
         }
@@ -48,6 +64,7 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
     let surname     = req.body.surname;
     let phone       = req.body.phone;
     let email       = req.body.email;
+    let photo       = req.file.filename;
     let comment     = req.body.comment;
     let company_id  = req.body.company;
 
@@ -78,8 +95,8 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
         return;
     }
 
-    db.query(`INSERT INTO customers (name, surname, phone, email, comment, company_id) 
-            VALUES ( '${name}', '${surname}', '${phone}', '${email}', '${comment}', '${company_id}' )`
+    db.query(`INSERT INTO customers (name, surname, phone, email, photo, comment, company_id) 
+            VALUES ( '${name}', '${surname}', '${phone}', '${email}', '${photo}', '${comment}', '${company_id}' )`
     , err => {
         if(err) {
             res.redirect('/list-clients/?m=Nepavyko pridėti kliento&s=danger');
@@ -88,32 +105,6 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
 
         res.redirect('/list-clients/?m=Sėkmingai pridėjote klientą&s=success');
     });
-
-    // db.query(`SELECT * FROM companies WHERE name = '${companyName}'`, (err, resp) => {
-
-    //     if(err) {
-    //         res.redirect('/list-companies/?m=Įvyko klaida&s=danger');
-    //         return;
-    //     }
-
-    //     if(resp.length == 0) {
-            
-    //         db.query(`INSERT INTO companies (name, address) 
-    //                 VALUES ( '${companyName}' , '${companyAddress}' )`
-    //         , err => {
-    //             if(err) {
-    //                 console.log(err);
-    //                 return;
-    //             }
-
-    //             res.redirect('/list-companies/?m=Sėkmingai pridėjote įrašą&s=success');
-    //         });
-
-    //     } else {
-    //         res.redirect('/list-companies/?m=Toks įrašas jau egzistuoja&s=warning');
-    //     }
-
-    // });
 
 });
 
