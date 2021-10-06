@@ -132,6 +132,8 @@ app.get('/edit-client/:id', (req, res) => {
                         companies[index]['selected'] = true;
                 });
 
+                // customer[0]['companies'] = companies;
+
                 if(err) {
                     res.render('template/clients/add-client', {client: customer, messages: 'Nepavyko paimti kompanijų iš duomenų bazės.', status: 'danger'});
                 } else {
@@ -162,6 +164,7 @@ app.post('/edit-client/:id', upload.single('photo'), (req, res) => {
     let company_id  = req.body.company;
     let del_photo   = req.body.delete_photo;
     let sql         = '';
+    let values      = [];
 
     if(!validator.isAlpha(name, 'en-US', {ignore: ' .ąĄčČęĘėĖįĮšŠųŲūŪ'})
         || !validator.isLength(name, {min: 3, max: 50})) {
@@ -191,12 +194,14 @@ app.post('/edit-client/:id', upload.single('photo'), (req, res) => {
     }
 
     if(photo || del_photo == 1) {
-        sql = `UPDATE customers SET name = '${name}', surname = '${surname}', phone = '${phone}', email = '${email}', photo = '${photo}', comment = '${comment}', company_id = '${company_id}' WHERE id = ${id}`;
+        sql = `UPDATE customers SET name = ?, surname = ?, phone = ?, email = ?, photo = ?, comment = ?, company_id = ? WHERE id = ?`;
+        values = [name, surname, phone, email, photo, comment, company_id, id];
     } else {
-        sql = `UPDATE customers SET name = '${name}', surname = '${surname}', phone = '${phone}', email = '${email}', comment = '${comment}', company_id = '${company_id}' WHERE id = ${id}`;
+        sql = `UPDATE customers SET name = ?, surname = ?, phone = ?, email = ?, comment = ?, company_id = ? WHERE id = ?`;
+        values = [name, surname, phone, email, comment, company_id, id];
     }
 
-    db.query(sql, err => {
+    db.query(sql, values, err => {
         if(err) {
             res.redirect('/list-clients/?m=Nepavyko pridėti kliento&s=danger');
             return;

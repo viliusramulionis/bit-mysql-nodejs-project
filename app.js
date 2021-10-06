@@ -6,6 +6,15 @@ const path = require('path');
 const clientsController = require('./controllers/clients');
 const companiesController = require('./controllers/companies');
 
+//express-session
+const session = require('express-session');
+
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
+
 app.use(express.urlencoded({
     extended: false
 }));
@@ -32,7 +41,7 @@ app.use('/', companiesController);
 
 app.get('/', (req, res) => {
     //res.render('add-company');
-    res.render('template/index');
+    res.render('template/login');
 });
 
 
