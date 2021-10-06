@@ -19,6 +19,7 @@ const upload = multer({
     storage: storage
 });
 const db = require('../db/connection');
+const { UV_FS_O_FILEMAP } = require('constants');
 const app = express.Router();
 
 //Klientai
@@ -28,11 +29,11 @@ app.get('/list-clients', (req, res) => {
     let messages = req.query.m;
     let status = req.query.s;
 
-    db.query(`SELECT * FROM customers`, (err, resp) => {
-        console.log(resp);
+    db.query(`SELECT * FROM customers`, (err, customers) => {
+
         if(!err) {
 
-            res.render('template/clients/list-clients', {clients: resp, messages, status});
+            res.render('template/clients/list-clients', {clients: customers, messages, status});
 
         } else {
 
@@ -64,7 +65,7 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
     let surname     = req.body.surname;
     let phone       = req.body.phone;
     let email       = req.body.email;
-    let photo       = (!req.files) ? '' : req.file.filename; //If funkcijos trumpinys, jeigu req.files neegzistuoja, tuomet grąžiname tuščią stringą. Priešingu atveju, grąžiname failo pavadinimą.
+    let photo       = (req.file) ? req.file.filename : ''; //If funkcijos trumpinys, jeigu req.files neegzistuoja, tuomet grąžiname tuščią stringą. Priešingu atveju, grąžiname failo pavadinimą.
     let comment     = req.body.comment;
     let company_id  = req.body.company;
 
@@ -104,6 +105,124 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
         }
 
         res.redirect('/list-clients/?m=Sėkmingai pridėjote klientą&s=success');
+    });
+
+});
+
+app.get('/edit-client/:id', (req, res) => {
+
+    let id          = req.params.id;
+    let messages    = req.query.m;
+    let status      = req.query.s;
+
+    db.query(`SELECT * FROM customers WHERE id = ${id}`, (err, customer) => {
+        
+        if(!err) {
+            
+            //Išsitraukiame kompaniju sąrašą.
+            db.query(`SELECT id, name FROM companies`, (err, companies) => {
+
+                customer = customer[0];
+
+                //Sutikriname kompanijas ar kuri nors iš jų buvo priskirta klientui,
+                companies.forEach(function(val, index) {
+
+                    //Jeigu einamas kompanijos id atitinka id iš kliento informacijos, prisikiriame naują indeksą ir reikšmę
+                    if(customer['company_id'] == val['id'])
+                        companies[index]['selected'] = true;
+                });
+
+                if(err) {
+                    res.render('template/clients/add-client', {client: customer, messages: 'Nepavyko paimti kompanijų iš duomenų bazės.', status: 'danger'});
+                } else {
+                    res.render('template/clients/edit-client', {client: customer, companies, messages, status});
+                }
+                
+            });
+
+        } else {
+
+            res.redirect('/list-clients/?m=Tokio kliento rasti nepavyko&s=danger');
+
+        }
+
+    });
+
+});
+
+app.post('/edit-client/:id', upload.single('photo'), (req, res) => {
+    
+    let id          = req.params.id;
+    let name        = req.body.name;
+    let surname     = req.body.surname;
+    let phone       = req.body.phone;
+    let email       = req.body.email;
+    let photo       = (req.file) ? req.file.filename : ''; //If funkcijos trumpinys, jeigu req.files neegzistuoja, tuomet grąžiname tuščią stringą. Priešingu atveju, grąžiname failo pavadinimą.
+    let comment     = req.body.comment;
+    let company_id  = req.body.company;
+    let del_photo   = req.body.delete_photo;
+    let sql         = '';
+
+    if(!validator.isAlpha(name, 'en-US', {ignore: ' .ąĄčČęĘėĖįĮšŠųŲūŪ'})
+        || !validator.isLength(name, {min: 3, max: 50})) {
+        res.redirect('/list-clients/?m=Įveskite kliento vardą&s=danger'); 
+        return;
+    }
+
+    if(!validator.isAlpha(surname, 'en-US', {ignore: ' .ąĄčČęĘėĖįĮšŠųŲūŪ'})
+        || !validator.isLength(name, {min: 3, max: 50})) {
+        res.redirect('/list-clients/?m=Įveskite kliento pavardę&s=danger'); 
+        return;
+    }
+
+    if(!validator.isMobilePhone(phone, 'lt-LT')) {
+        res.redirect('/list-clients/?m=Įveskite kliento telefono numerį&s=danger'); 
+        return;
+    }
+
+    if(!validator.isEmail(email)) {
+        res.redirect('/list-clients/?m=Įveskite kliento el. pašto adresą&s=danger'); 
+        return;
+    }
+
+    if(!validator.isInt(company_id)) {
+        res.redirect('/list-clients/?m=Pasirinkite kompaniją&s=danger'); 
+        return;
+    }
+
+    if(photo || del_photo == 1) {
+        sql = `UPDATE customers SET name = '${name}', surname = '${surname}', phone = '${phone}', email = '${email}', photo = '${photo}', comment = '${comment}', company_id = '${company_id}' WHERE id = ${id}`;
+    } else {
+        sql = `UPDATE customers SET name = '${name}', surname = '${surname}', phone = '${phone}', email = '${email}', comment = '${comment}', company_id = '${company_id}' WHERE id = ${id}`;
+    }
+
+    db.query(sql, err => {
+        if(err) {
+            res.redirect('/list-clients/?m=Nepavyko pridėti kliento&s=danger');
+            return;
+        }
+
+        res.redirect('/list-clients/?m=Sėkmingai pridėjote klientą&s=success');
+    });
+
+});
+
+app.get('/delete-client/:id', (req, res) => {
+
+    let id = req.params.id;
+
+    db.query(`DELETE FROM customers WHERE id = ${id}`, (err, resp) => {
+
+        if(!err) {
+
+            res.redirect('/list-clients/?m=Įrašas sėkmingai ištrintas&s=success');
+
+        } else {
+
+            res.redirect('/list-clients/?m=Nepavyko ištrinti įrašo&s=danger');
+        
+        }
+
     });
 
 });

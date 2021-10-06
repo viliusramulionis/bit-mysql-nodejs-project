@@ -1,0 +1,60 @@
+<h1>Kliento redagavimas</h1>
+<div class="pt-3"></div>
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
+
+<form method="post" action="/edit-client/{{client.id}}" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="name" class="form-label">Vardas</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{client.name}}" />
+    </div>
+    <div class="mb-3">
+        <label for="surname" class="form-label">Pavardė</label>
+        <input type="text" name="surname" id="surname" class="form-control" value="{{client.surname}}" />
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">Telefono numeris</label>
+        <input type="tel" name="phone" id="phone" class="form-control" value="{{client.phone}}" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">El. pašto adresas</label>
+        <input type="text" name="email" id="email" class="form-control" value="{{client.email}}" />
+    </div>
+    <div class="mb-3">
+        <label for="photo" class="form-label">Nuotrauka</label>
+        {{#if client.photo}}
+            <div class="clearfix">
+                <div class="float-start" style="padding-right: 20px;">
+                    <img src="/uploads/{{client.photo}}" style="max-height: 100px;" />
+                </div>
+                <div class="float-start">
+                    <input type="file" name="photo" id="photo" class="form-control" value="" />
+                    <div class="pt-2">
+                        <input type="checkbox" name="delete_photo" id="delete_photo" value="1" />
+                        <label for="delete_photo" class="form-label">Ištrinti nuotrauką</label>
+                    </div>
+                </div>
+            </div>
+        {{else}}
+            <input type="file" name="photo" id="photo" class="form-control" value="" />
+        {{/if}}
+        
+    </div>
+    <div class="mb-3">
+        <label for="comment" class="form-label">Komentarai</label>
+        <textarea name="comment" id="comment" class="form-control">{{{client.comment}}}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="company" class="form-label">Kompanija</label>
+        <select name="company" id="company" class="form-control">
+            <option value="0">Bedarbis</option> 
+            {{#each companies}}
+            <option value="{{id}}" {{#if selected}}selected="selected"{{/if}}>{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Įrašyti</button>
+ </form>
+ <div class="pt-5"></div>
+

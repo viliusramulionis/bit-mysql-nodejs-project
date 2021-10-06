@@ -2,7 +2,7 @@ const express = require('express');
 const hbs = require('express-handlebars');
 const app = express();
 const path = require('path');
-const db = require('./db/connection');
+// const db = require('./db/connection');
 const clientsController = require('./controllers/clients');
 const companiesController = require('./controllers/companies');
 

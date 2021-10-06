@@ -1,6 +1,6 @@
-let deleteCompany = document.querySelectorAll('.btn-delete-company');
+let deleteButton = document.querySelectorAll('.btn-delete');
 
-deleteCompany.forEach(node => node.addEventListener("click", function(e) {
+deleteButton.forEach(node => node.addEventListener("click", function(e) {
 
     e.preventDefault();
 
