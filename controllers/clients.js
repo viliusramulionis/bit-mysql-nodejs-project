@@ -2,6 +2,7 @@ const express   = require('express');
 const validator = require('validator');
 const path      = require('path');
 const multer    = require('multer');
+const fs        = require('fs');
 const storage   = multer.diskStorage({
     destination: 'uploads/',
     filename: function(req, file, callback) {
@@ -216,19 +217,38 @@ app.get('/delete-client/:id', (req, res) => {
 
     let id = req.params.id;
 
-    db.query(`DELETE FROM customers WHERE id = ${id}`, (err, resp) => {
+    db.query(`SELECT photo FROM customers WHERE id = ${id}`, (err, customer) => {
 
         if(!err) {
 
-            res.redirect('/list-clients/?m=Įrašas sėkmingai ištrintas&s=success');
+            if(customer[0]['photo']) {
+                
+                fs.unlink( __dirname + '../../uploads/' + customer[0]['photo'], err => {
+                    
+                    if(err) {
+                        res.redirect('/list-clients/?m=Nepavyko ištrinti nuotraukos&s=danger');
+                    }    
+                
+                });
 
-        } else {
+            }
 
-            res.redirect('/list-clients/?m=Nepavyko ištrinti įrašo&s=danger');
+            db.query(`DELETE FROM customers WHERE id = ${id}`, (err, resp) => {
+
+                if(!err) {
         
-        }
+                    res.redirect('/list-clients/?m=Įrašas sėkmingai ištrintas&s=success');
+        
+                } else {
+        
+                    res.redirect('/list-clients/?m=Nepavyko ištrinti įrašo&s=danger');
+                
+                }
+        
+            });
 
-    });
+        }
+    })
 
 });
 
