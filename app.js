@@ -10,12 +10,9 @@ const companiesController = require('./controllers/companies');
 const session = require('express-session');
 
 app.use(session({
-    cookie: {
-      maxAge: 36000000,
-      httpOnly: false // <- set httpOnly to false
-    },
-    secret: 'MySecret',
-    secure: false
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
 }));
 
 app.use(express.urlencoded({
@@ -43,15 +40,12 @@ app.use('/', companiesController);
 //Controlleris vedantis index puslapi
 
 app.get('/', (req, res) => {
-    req.session.home = true;
     //res.render('add-company');
     res.render('template/login');
-
-    console.log(req.session);
 });
 
 app.post('/login', (req, res) => {
-    console.log(req.session);
+
     let user = req.body.email;
     let pass = req.body.password;
 
@@ -61,8 +55,8 @@ app.post('/login', (req, res) => {
             
             if(!err && user.length > 0) {
                 
-                
-                req.session.abd = true;
+                console.log('test');
+                req.session.auth = true;
 
             }
 

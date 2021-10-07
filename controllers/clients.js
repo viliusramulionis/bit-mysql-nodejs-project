@@ -20,32 +20,42 @@ const upload = multer({
     storage: storage
 });
 const db = require('../db/connection');
-const { UV_FS_O_FILEMAP } = require('constants');
 const app = express.Router();
 
 //Klientai
 
 app.get('/list-clients', (req, res) => {
 
-    let messages = req.query.m;
-    let status = req.query.s;
+    let messages    = req.query.m;
+    let status      = req.query.s;
+    let company_id  = req.query.company_id;
 
-    db.query(`SELECT c.id, c.name, 
-    c.surname, c.phone, c.email, 
-    c.photo, c.company_id, 
-    co.name AS company_name FROM customers AS c
-    LEFT JOIN companies AS co
-    ON c.company_id = co.id`, (err, customers) => {
+    db.query(`SELECT * FROM companies`, (err, companies) => {
 
         if(!err) {
 
-            console.log(customers);
+            db.query(`SELECT c.id, c.name, 
+            c.surname, c.phone, c.email, 
+            c.photo, c.company_id, 
+            co.name AS company_name FROM customers AS c
+            LEFT JOIN companies AS co
+            ON c.company_id = co.id WHERE c.company_id = ${company_id}`, (err, customers) => {
 
-            res.render('template/clients/list-clients', {clients: customers, messages, status});
+                if(!err) {
+
+                    res.render('template/clients/list-clients', {clients: customers, companies, messages, status});
+
+                } else {
+
+                    res.redirect('/list-clients/?m=Įvyko klaida&s=danger');
+
+                }
+
+            });
 
         } else {
 
-            res.redirect('/list-clients/?message=Įvyko klaida&s=danger');
+            res.redirect('/list-clients/?m=Įvyko klaida&s=danger');
 
         }
 
