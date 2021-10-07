@@ -29,17 +29,34 @@ app.get('/list-clients', (req, res) => {
     let messages    = req.query.m;
     let status      = req.query.s;
     let company_id  = req.query.company_id;
+    let where       = (company_id) ? 'WHERE c.company_id = ' + company_id : '';
 
     db.query(`SELECT * FROM companies`, (err, companies) => {
 
         if(!err) {
+
+            if(company_id) {
+
+                //Sutikriname kompanijas ar kuri nors iš jų buvo priskirta klientui,
+                companies.forEach(function(val, index) {
+
+                    //Jeigu einamas kompanijos id atitinka id iš kliento informacijos, prisikiriame naują indeksą ir reikšmę
+                    if(company_id == val['id'])
+                        companies[index]['selected'] = true;
+                });
+
+            }
+            //(atvaizduojamu rezultatu skaiciu / parodomu rezultatu skaiciaus) * esamo puslapio
+            //LIMIT 0, 10 - Limituoja gautų rezultatų skaičių nuo 0 iki 10. Pirma reikšmė reiškia nuo kurios eilutės pradedame imti rezultatus, o antroji kiek rezultatų imame.
+            //ORDER BY pavadinimas - Rūšiuoja duomenis pagal pasirinktą stulpelį
+            //Iš karto po ORDER BY gali sekti ASC arba DESC, kas reiškia pagal didėjimo tvarką arba atvirkščiai
 
             db.query(`SELECT c.id, c.name, 
             c.surname, c.phone, c.email, 
             c.photo, c.company_id, 
             co.name AS company_name FROM customers AS c
             LEFT JOIN companies AS co
-            ON c.company_id = co.id WHERE c.company_id = ${company_id}`, (err, customers) => {
+            ON c.company_id = co.id ${where} ORDER BY c.name DESC`, (err, customers) => {
 
                 if(!err) {
 

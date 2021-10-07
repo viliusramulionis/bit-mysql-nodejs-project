@@ -5,14 +5,14 @@
     <div class="alert alert-{{status}}">{{messages}}</div>
 {{/if}}
 
-{{#if clients}}
 <div class="clearfix toolbar">
     <form action="/list-clients">
         <div class="col-auto">
             <select class="form-select" name="company_id" id="company_filter">
+                <option>---</option>
                 <option value="0">Bedarbis</option>
                 {{#each companies}}
-                    <option value="{{id}}">{{name}}</option>
+                    <option value="{{id}}" {{#if selected}}selected="selected"{{/if}}>{{name}}</option>
                 {{/each}}
             </select>
         </div>
@@ -21,6 +21,8 @@
         </div>
     </form>
 </div>
+
+{{#if clients}}
 
 <table class="table table-hover">
     <thead>
