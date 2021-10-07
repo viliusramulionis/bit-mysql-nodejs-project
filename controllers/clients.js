@@ -30,9 +30,16 @@ app.get('/list-clients', (req, res) => {
     let messages = req.query.m;
     let status = req.query.s;
 
-    db.query(`SELECT * FROM customers`, (err, customers) => {
+    db.query(`SELECT c.id, c.name, 
+    c.surname, c.phone, c.email, 
+    c.photo, c.company_id, 
+    co.name AS company_name FROM customers AS c
+    LEFT JOIN companies AS co
+    ON c.company_id = co.id`, (err, customers) => {
 
         if(!err) {
+
+            console.log(customers);
 
             res.render('template/clients/list-clients', {clients: customers, messages, status});
 

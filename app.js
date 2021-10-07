@@ -2,7 +2,7 @@ const express = require('express');
 const hbs = require('express-handlebars');
 const app = express();
 const path = require('path');
-// const db = require('./db/connection');
+const db = require('./db/connection');
 const clientsController = require('./controllers/clients');
 const companiesController = require('./controllers/companies');
 
@@ -10,9 +10,12 @@ const companiesController = require('./controllers/companies');
 const session = require('express-session');
 
 app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true
+    cookie: {
+      maxAge: 36000000,
+      httpOnly: false // <- set httpOnly to false
+    },
+    secret: 'MySecret',
+    secure: false
 }));
 
 app.use(express.urlencoded({
@@ -40,10 +43,36 @@ app.use('/', companiesController);
 //Controlleris vedantis index puslapi
 
 app.get('/', (req, res) => {
+    req.session.home = true;
     //res.render('add-company');
     res.render('template/login');
+
+    console.log(req.session);
 });
 
+app.post('/login', (req, res) => {
+    console.log(req.session);
+    let user = req.body.email;
+    let pass = req.body.password;
+
+    if(user && pass) {
+        
+        db.query(`SELECT * FROM users WHERE email = '${user}' AND password = '${pass}'`, (err, user) => {
+            
+            if(!err && user.length > 0) {
+                
+                
+                req.session.abd = true;
+
+            }
+
+        });
+
+    }
+
+    res.send('Sekmingai prisijungete');
+
+});
 
 app.listen('3000');
 
