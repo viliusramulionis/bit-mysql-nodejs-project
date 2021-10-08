@@ -22,7 +22,8 @@ app.use(express.urlencoded({
 app.engine('hbs', hbs({
     extname: 'hbs',
     defaultLayout: 'layout',
-    layoutsDir: __dirname + '/views/template'
+    layoutsDir: __dirname + '/views/template',
+    helpers: require('./config/handlebars-helpers')
 }));
 
 app.set('views', path.join(__dirname, '/views/'));

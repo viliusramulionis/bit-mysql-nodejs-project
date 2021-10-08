@@ -5,21 +5,34 @@
     <div class="alert alert-{{status}}">{{messages}}</div>
 {{/if}}
 
-<div class="clearfix toolbar">
-    <form action="/list-clients">
-        <div class="col-auto">
-            <select class="form-select" name="company_id" id="company_filter">
-                <option>---</option>
-                <option value="0">Bedarbis</option>
-                {{#each companies}}
-                    <option value="{{id}}" {{#if selected}}selected="selected"{{/if}}>{{name}}</option>
-                {{/each}}
-            </select>
+<div class="clearfix mb-3 toolbar">
+
+    <form action="/list-clients" class="form-inline">
+        <div class="input-group">
+        <select class="form-select" name="company_id" id="companyfilter">
+            <option value="0">Bedarbis</option>
+            {{#each companies}}
+                <option value="{{id}}" {{#if selected}}selected="selected"{{/if}}>{{name}}</option>
+            {{/each}}
+        </select>
+
+        <select class="form-select" name="order_by" id="orderby">
+            <option value="name" {{#eq order_by "name"}}selected="selected"{{/eq}}>Vardą</option>
+            <option value="surname" {{#eq order_by "surname"}}selected="selected"{{/eq}}>Pavardę</option>
+            <option value="email" {{#eq order_by "email"}}selected="selected"{{/eq}}>El. paštą</option>
+            <option value="company_id" {{#eq order_by "company_id"}}selected="selected"{{/eq}}>Kompaniją</option>
+        </select>
+
+        <select class="form-select" name="position" id="position">
+            <option value="ASC" {{#eq position "ASC"}}selected="selected"{{/eq}}>Didėjanti</option>
+            <option value="DESC" {{#eq position "DESC"}}selected="selected"{{/eq}}>Mažėjanti</option>
+        </select>
+
+        <button type="submit" class="float-start btn btn-secondary">Filtruoti</button>
         </div>
-        <div class="col-auto">
-            <button type="submit" class="float-start btn btn-secondary">Filtruoti</button>
-        </div>
+
     </form>
+
 </div>
 
 {{#if clients}}

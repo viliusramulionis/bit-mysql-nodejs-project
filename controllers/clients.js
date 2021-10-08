@@ -28,8 +28,21 @@ app.get('/list-clients', (req, res) => {
 
     let messages    = req.query.m;
     let status      = req.query.s;
-    let company_id  = req.query.company_id;
-    let where       = (company_id) ? 'WHERE c.company_id = ' + company_id : '';
+    let company_id  = (req.query.company_id != -1) ? req.query.company_id : '';
+    let order_by    = req.query.order_by;
+    let position    = req.query.position;
+    let query_a     = (company_id) ? 'WHERE c.company_id = ' + company_id : '';
+    let query_b     = (req.query.order_by && req.query.order_by != -1) ? 'ORDER BY c.' + req.query.order_by : ''; 
+    let query_c     = '';
+
+    if(req.query.position == 1)
+        query_c = 'ASC';
+
+    if(req.query.position == 2)
+        query_c = 'DESC';
+
+
+    //if( !company_id.isInteger() || company.id == -1) 
 
     db.query(`SELECT * FROM companies`, (err, companies) => {
 
@@ -56,14 +69,20 @@ app.get('/list-clients', (req, res) => {
             c.photo, c.company_id, 
             co.name AS company_name FROM customers AS c
             LEFT JOIN companies AS co
-            ON c.company_id = co.id ${where} ORDER BY c.name DESC`, (err, customers) => {
-
+            ON c.company_id = co.id ${query_a} ${query_b} ${query_c}`, (err, customers) => {
+                
                 if(!err) {
-
-                    res.render('template/clients/list-clients', {clients: customers, companies, messages, status});
+ 
+                    res.render('template/clients/list-clients', {clients: customers, order_by, position, companies, messages, status});
 
                 } else {
-
+                    // console.log(`SELECT c.id, c.name, 
+                    // c.surname, c.phone, c.email, 
+                    // c.photo, c.company_id, 
+                    // co.name AS company_name FROM customers AS c
+                    // LEFT JOIN companies AS co
+                    // ON c.company_id = co.id ${where} ${order_by} ${position}`);
+                    // res.json(req.query);
                     res.redirect('/list-clients/?m=Įvyko klaida&s=danger');
 
                 }
