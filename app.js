@@ -56,7 +56,6 @@ app.post('/login', (req, res) => {
             
             if(!err && user.length > 0) {
                 
-                console.log('test');
                 req.session.auth = true;
 
             }
