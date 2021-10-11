@@ -18,6 +18,11 @@ app.use(session({
     saveUninitialized: true
 }));
 
+app.use( function(req, res, next){
+    app.locals.auth = (req.session.auth) ? true : false;
+    next();
+});
+
 app.use(express.urlencoded({
     extended: false
 }));
@@ -46,7 +51,7 @@ app.use('/', companiesController);
 app.get('/', (req, res) => {
     //res.render('add-company');
     if(req.session.auth)
-        res.redirect('/list-clients');
+        res.render('template/index');
     else 
         res.render('template/login');
 });
@@ -64,6 +69,11 @@ app.post('/login', (req, res) => {
                 
                 req.session.auth = true;
                 req.session.user = user;
+
+                let hour = 3600000
+                req.session.cookie.expires = new Date(Date.now() + hour)
+                req.session.cookie.maxAge = hour
+
                 req.session.save();
             }
 
@@ -77,10 +87,12 @@ app.post('/login', (req, res) => {
 
 app.get('/logout', (req, res) => {
 
-    req.session.auth = false;
-    req.session.user = false;
+    req.session.destroy();
 
-    req.session.save();
+    // req.session.auth = false;
+    // req.session.user = false;
+
+    // req.session.save();
 
     res.redirect('/');
 

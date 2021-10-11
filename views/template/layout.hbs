@@ -23,7 +23,6 @@
 
   </head>
   <body class="d-flex flex-column h-100">
-    
     <header>
     <!-- Fixed navbar -->
     <nav class="navbar navbar-nav navbar-expand-md navbar-dark bg-dark">
@@ -51,6 +50,12 @@
                     <li><a class="dropdown-item" href="/add-client">Pridėti klientą</a></li>
                     </ul>
                 </li>
+
+                {{#if this.auth}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Atisijungti</a>
+                    </li>
+                {{/if}}
                 </ul>
             </div>
         </div>

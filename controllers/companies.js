@@ -82,6 +82,12 @@ app.get('/edit-company/:id', (req, res) => {
     });
 });
 
+app.get('/page/:id', (req, res) => {
+    let puslapio_nr = req.params.id;
+
+    res.send('Test ' + puslapio_nr);
+});
+
 app.post('/edit-company/:id', (req, res) => {
 
     let id              = req.params.id;

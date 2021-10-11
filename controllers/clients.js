@@ -61,6 +61,8 @@ app.get('/list-clients', (req, res) => {
             }
             //(atvaizduojamu rezultatu skaiciu / parodomu rezultatu skaiciaus) * esamo puslapio
             //LIMIT 0, 10 - Limituoja gautų rezultatų skaičių nuo 0 iki 10. Pirma reikšmė reiškia nuo kurios eilutės pradedame imti rezultatus, o antroji kiek rezultatų imame.
+            //Pirmas puslapis - LIMIT 0, 10
+            //Antras puslapis - LIMIT 10, 20
             //ORDER BY pavadinimas - Rūšiuoja duomenis pagal pasirinktą stulpelį
             //Iš karto po ORDER BY gali sekti ASC arba DESC, kas reiškia pagal didėjimo tvarką arba atvirkščiai
 
