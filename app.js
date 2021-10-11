@@ -9,6 +9,9 @@ const companiesController = require('./controllers/companies');
 //express-session
 const session = require('express-session');
 
+//md5 modulis
+const md5 = require('md5');
+
 app.use(session({
     secret: 'secret',
     resave: true,
@@ -42,13 +45,16 @@ app.use('/', companiesController);
 
 app.get('/', (req, res) => {
     //res.render('add-company');
-    res.render('template/login');
+    if(req.session.auth)
+        res.redirect('/list-clients');
+    else 
+        res.render('template/login');
 });
 
 app.post('/login', (req, res) => {
 
     let user = req.body.email;
-    let pass = req.body.password;
+    let pass = md5(req.body.password);
 
     if(user && pass) {
         
@@ -57,14 +63,26 @@ app.post('/login', (req, res) => {
             if(!err && user.length > 0) {
                 
                 req.session.auth = true;
-
+                req.session.user = user;
+                req.session.save();
             }
 
         });
 
     }
 
-    res.send('Sekmingai prisijungete');
+    res.redirect('/');
+
+});
+
+app.get('/logout', (req, res) => {
+
+    req.session.auth = false;
+    req.session.user = false;
+
+    req.session.save();
+
+    res.redirect('/');
 
 });
 
