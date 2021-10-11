@@ -21,6 +21,7 @@ const upload = multer({
 });
 const db = require('../db/connection');
 const app = express.Router();
+const per_page = 2;
 
 //Klientai
 
@@ -44,58 +45,68 @@ app.get('/list-clients', (req, res) => {
 
     //if( !company_id.isInteger() || company.id == -1) 
 
-    db.query(`SELECT * FROM companies`, (err, companies) => {
+    db.query(`SELECT COUNT(*) count FROM customers`, (err, kiekis) => {
+        let customers_count = kiekis[0].count;
+        let page_count =  customers_count / per_page;
+        let pager = [];
 
-        if(!err) {
+        for(let i = 1; i <= page_count; i++) 
+            pager.push(i);
 
-            if(company_id) {
+        db.query(`SELECT * FROM companies`, (err, companies) => {
 
-                //Sutikriname kompanijas ar kuri nors iš jų buvo priskirta klientui,
-                companies.forEach(function(val, index) {
+            if(!err) {
 
-                    //Jeigu einamas kompanijos id atitinka id iš kliento informacijos, prisikiriame naują indeksą ir reikšmę
-                    if(company_id == val['id'])
-                        companies[index]['selected'] = true;
-                });
+                if(company_id) {
 
-            }
-            //(atvaizduojamu rezultatu skaiciu / parodomu rezultatu skaiciaus) * esamo puslapio
-            //LIMIT 0, 10 - Limituoja gautų rezultatų skaičių nuo 0 iki 10. Pirma reikšmė reiškia nuo kurios eilutės pradedame imti rezultatus, o antroji kiek rezultatų imame.
-            //Pirmas puslapis - LIMIT 0, 10
-            //Antras puslapis - LIMIT 10, 20
-            //ORDER BY pavadinimas - Rūšiuoja duomenis pagal pasirinktą stulpelį
-            //Iš karto po ORDER BY gali sekti ASC arba DESC, kas reiškia pagal didėjimo tvarką arba atvirkščiai
+                    //Sutikriname kompanijas ar kuri nors iš jų buvo priskirta klientui,
+                    companies.forEach(function(val, index) {
 
-            db.query(`SELECT c.id, c.name, 
-            c.surname, c.phone, c.email, 
-            c.photo, c.company_id, 
-            co.name AS company_name FROM customers AS c
-            LEFT JOIN companies AS co
-            ON c.company_id = co.id ${query_a} ${query_b} ${query_c}`, (err, customers) => {
-                
-                if(!err) {
- 
-                    res.render('template/clients/list-clients', {clients: customers, order_by, position, companies, messages, status});
-
-                } else {
-                    // console.log(`SELECT c.id, c.name, 
-                    // c.surname, c.phone, c.email, 
-                    // c.photo, c.company_id, 
-                    // co.name AS company_name FROM customers AS c
-                    // LEFT JOIN companies AS co
-                    // ON c.company_id = co.id ${where} ${order_by} ${position}`);
-                    // res.json(req.query);
-                    res.redirect('/list-clients/?m=Įvyko klaida&s=danger');
+                        //Jeigu einamas kompanijos id atitinka id iš kliento informacijos, prisikiriame naują indeksą ir reikšmę
+                        if(company_id == val['id'])
+                            companies[index]['selected'] = true;
+                    });
 
                 }
+                //(atvaizduojamu rezultatu skaiciu / parodomu rezultatu skaiciaus) * esamo puslapio
+                //LIMIT 0, 10 - Limituoja gautų rezultatų skaičių nuo 0 iki 10. Pirma reikšmė reiškia nuo kurios eilutės pradedame imti rezultatus, o antroji kiek rezultatų imame.
+                //Pirmas puslapis - LIMIT 0, 10
+                //Antras puslapis - LIMIT 10, 20
+                //ORDER BY pavadinimas - Rūšiuoja duomenis pagal pasirinktą stulpelį
+                //Iš karto po ORDER BY gali sekti ASC arba DESC, kas reiškia pagal didėjimo tvarką arba atvirkščiai
 
-            });
+                db.query(`SELECT c.id, c.name, 
+                c.surname, c.phone, c.email, 
+                c.photo, c.company_id, 
+                co.name AS company_name FROM customers AS c
+                LEFT JOIN companies AS co
+                ON c.company_id = co.id ${query_a} ${query_b} ${query_c}`, (err, customers) => {
+                    
+                    if(!err) {
+    
+                        res.render('template/clients/list-clients', {clients: customers, order_by, position, companies, messages, status, pager});
 
-        } else {
+                    } else {
+                        // console.log(`SELECT c.id, c.name, 
+                        // c.surname, c.phone, c.email, 
+                        // c.photo, c.company_id, 
+                        // co.name AS company_name FROM customers AS c
+                        // LEFT JOIN companies AS co
+                        // ON c.company_id = co.id ${where} ${order_by} ${position}`);
+                        // res.json(req.query);
+                        res.redirect('/list-clients/?m=Įvyko klaida&s=danger');
 
-            res.redirect('/list-clients/?m=Įvyko klaida&s=danger');
+                    }
 
-        }
+                });
+
+            } else {
+
+                res.redirect('/list-clients/?m=Įvyko klaida&s=danger');
+
+            }
+
+        });
 
     });
 
