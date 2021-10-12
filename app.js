@@ -70,9 +70,9 @@ app.post('/login', (req, res) => {
                 req.session.auth = true;
                 req.session.user = user;
 
-                let hour = 3600000
-                req.session.cookie.expires = new Date(Date.now() + hour)
-                req.session.cookie.maxAge = hour
+                let hour = 3600000;
+                req.session.cookie.expires = new Date(Date.now() + hour);
+                req.session.cookie.maxAge = hour;
 
                 req.session.save();
             }
@@ -91,7 +91,6 @@ app.get('/logout', (req, res) => {
 
     // req.session.auth = false;
     // req.session.user = false;
-
     // req.session.save();
 
     res.redirect('/');

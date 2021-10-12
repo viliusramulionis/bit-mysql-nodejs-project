@@ -4,10 +4,21 @@ const db = require('../db/connection');
 const app = express.Router();
 
 app.get('/add-company', (req, res) => {
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
+
     res.render('template/company/add-company');
 });
 
 app.post('/add-company', (req, res) => {
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
 
     let companyName     = req.body.name;
     let companyAddress  = req.body.address;
@@ -54,6 +65,11 @@ app.post('/add-company', (req, res) => {
 
 app.get('/list-companies', (req, res) => {
 
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
+
     let messages = req.query.m;
     let status = req.query.s;
 
@@ -69,6 +85,11 @@ app.get('/list-companies', (req, res) => {
 
 app.get('/edit-company/:id', (req, res) => {
 
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
+
     let id          = req.params.id;
     let messages    = req.query.m;
     let status      = req.query.s;
@@ -83,12 +104,23 @@ app.get('/edit-company/:id', (req, res) => {
 });
 
 app.get('/page/:id', (req, res) => {
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
+
     let puslapio_nr = req.params.id;
 
     res.send('Test ' + puslapio_nr);
 });
 
 app.post('/edit-company/:id', (req, res) => {
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
 
     let id              = req.params.id;
     let companyName     = req.body.name;
@@ -143,6 +175,11 @@ app.post('/edit-company/:id', (req, res) => {
 });
 
 app.get('/delete-company/:id', (req, res) => {
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
 
     let id = req.params.id;
 
